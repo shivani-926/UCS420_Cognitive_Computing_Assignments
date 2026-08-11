@@ -1,0 +1,137 @@
+import random
+from collections import Counter
+
+
+#QUESTION 1: LIST OPERATIONS"
+L = [10, 0, 20, 40, 10, 70, 0, 20, 70, 80]
+print(L)
+L.append(99) 
+L.insert(2, 55)
+print(L)
+L.remove(0)
+print(L)
+# remove() finds the first occurrence of the specified value (0) and removes it
+popped_val = L.pop() 
+print(L)
+# remove() finds the first occurrence of the specified value (0) and removes it
+L.sort()
+print("iv. Sorted ascending:", L)
+L.sort(reverse=True)
+print("iv. Sorted descending:", L)
+print(f"v. First three elements: {L[:3]} | Last three elements: {L[-3:]}")
+average = sum(L) / len(L)
+greater_than_avg = [x for x in L if x > average]
+print(f"The average is {average}. Elements > average:", greater_than_avg)
+
+
+#QUESTION 2: TUPLE OPERATIONS
+scores = (10, 0, 20, 40, 10, 70, 0, 20)
+print(scores)
+highest_score = max(scores)
+highest_index = scores.index(highest_score)
+lowest_score = min(scores)
+lowest_count = scores.count(lowest_score)
+print(f"Highest: {highest_score} (Index: {highest_index}). Lowest: {lowest_score} (Count: {lowest_count}).")
+reversed_scores_list = list(reversed(scores))
+print("Reversed tuple as a list:", reversed_scores_list)
+# Explanation: Tuples themselves cannot be reversed in-place because they are immutable.
+search_val = int(input("Please enter a score to search for: "))
+if search_val in scores:
+    print(f"Score {search_val} first appears at index: {scores.index(search_val)}")
+else:
+    print(f"Score {search_val} is not present in the tuple.")
+try:
+    scores[0] = 100
+except TypeError as e:
+    print(f"Error: {e}")
+    # Explanation: This happens because tuples are immutable and do not support item assignment, unlike mutable lists.
+first, second, *remaining = scores
+print(f"Unpacked -> First: {first}, Second: {second}, Remaining: {remaining}")
+
+
+#QUESTION 3: RANDOM NUMBERS & PRIMES
+random.seed(1024170278)
+random_list = [random.randint(100, 900) for _ in range(100)]
+print("Generated 100 random numbers. First 5:", random_list[:5])
+odds = [num for num in random_list if num % 2 != 0]
+print(f"Total odd numbers found: {len(odds)}")
+evens = [num for num in random_list if num % 2 == 0]
+print(f"Total even numbers found: {len(evens)}")
+def is_prime(n):
+    if n < 2: return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0: return False
+    return True
+primes = [num for num in random_list if is_prime(num)]
+print(f"iv. Total prime numbers found: {len(primes)}")
+print(f"    Primes list: {primes}")
+frequency_counter = Counter(random_list)
+most_frequent_num, count = frequency_counter.most_common(1)[0]
+print(f"Most frequent number is {most_frequent_num}, appearing {count} times.")
+
+
+#QUESTION 4: SET OPERATIONS
+digits = [1, 0, 2, 4, 1, 7, 0, 2]
+A = {digit * 7 for digit in digits}
+B = {digit * 9 for digit in digits}
+print(A, B)
+print("Union:", A.union(B))
+print("Intersection:", A.intersection(B))
+print("A - B:", A.difference(B))
+print("B - A:", B.difference(A))
+# Explanation: difference() gives elements strictly in one set but not the other, whereas symmetric_difference() gives elements in EITHER set but not both.
+print("Symmetric Difference:", A.symmetric_difference(B))
+print("Is A a subset of B?:", A.issubset(B))
+print("Is B a superset of A?:", B.issuperset(A))
+try:
+    X = int(input("Please enter a value X to remove from Set A: "))
+    A.discard(X)
+    print(f"Set A after discarding {X}:", A)
+except ValueError:
+    print("Invalid input. Please enter an integer.")
+# Explanation: discard() safely does nothing if the element is missing, whereas remove() will crash your program with a KeyError.
+
+
+#QUESTION 5: DICTIONARY OPERATIONS
+my_dict = {
+    "name": "Shivani",
+    "roll_no": "1024170278",
+    "branch": "Computer Science",
+    "age": 20,
+    "city": "Patiala"
+}
+print(my_dict)
+my_dict = {("location" if k == "city" else k): v for k, v in my_dict.items()} 
+#or my_dict["location"] = my_dict.pop("city")
+print(After renaming 'city' to 'location':", my_dict)
+my_dict["cgpa"] = 9.2
+print("After adding 'cgpa':", my_dict)
+my_dict["age"] += 1
+print("After increasing 'age' by 1:", my_dict)
+#Delete 'branch' using pop() and del
+dict_copy_1 = my_dict.copy()
+dict_copy_2 = my_dict.copy()
+popped_val = dict_copy_1.pop("branch")
+del dict_copy_2["branch"]
+print(f"Copy 1 after pop('branch'): {dict_copy_1}")
+print(f"Copy 2 after del['branch']: {dict_copy_2}")
+# Explanation: pop() deletes the key and RETURNS its value, whereas del simply deletes the key-value pair from memory returning nothing.
+print("Dictionary contents:")
+for key, value in my_dict.items():
+    print(f"{key} -> {value}")
+if "email" in my_dict:
+    print("Email is:", my_dict["email"])
+else:
+    print("Safe Fallback: The key 'email' does not exist.")
+friend_dict = {
+    "name": "Anvesha",
+    "roll_no": "1024170120",
+    "branch": "AI/ML",
+    "age": 20,
+    "location": "Bhopal"
+}
+merged_dict = {**my_dict, **friend_dict}
+print("Merged Dictionary:", merged_dict)
+# Explanation: When merging with {**dict1, **dict2}, the dictionary on the right (dict2) "wins" and overwrites any duplicate keys.
+strings_only_dict = {k: v for k, v in my_dict.items() if isinstance(v, str)}
+print("Strings only dictionary:", strings_only_dict)
