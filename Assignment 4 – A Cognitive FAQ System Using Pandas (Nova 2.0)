@@ -1,1 +1,174 @@
+#QUESTION_1
+import pandas as pd
 
+fixed_entries = [
+    {"question": "what is the annual fee", "answer": "The annual fee is Rs 500.",
+     "keywords": "fee cost price charge", "category": "billing"},
+    {"question": "how to reset password", "answer": "Go to Settings > Reset Password.",
+     "keywords": "password reset login", "category": "account"},
+    {"question": "what are your working hours", "answer": "We are open 9 AM to 5 PM.",
+     "keywords": "hours timing open time", "category": "general"},
+    {"question": "how can i pay the fee", "answer": "You can pay via UPI, card, or net banking.",
+     "keywords": "pay payment upi fee", "category": "billing"},
+]
+
+roll_number = "1024170278"  
+d1 = int(roll_number[-2])
+d2 = int(roll_number[-1])
+
+category_map = ["billing", "account", "general"]
+cat1 = category_map[d1 % 3]
+cat2 = category_map[d2 % 3]
+
+invented_entries_bank = {
+    "billing": [
+        {"question": "how do I download my monthly invoice", "answer": "Go to Billing > Invoice History and click Download.", "keywords": "invoice download receipt history", "category": "billing"},
+        {"question": "are there any late payment charges", "answer": "Yes, a 5% fee is applied for payments made after the due date.", "keywords": "late charge penalty deadline", "category": "billing"}
+    ],
+    "account": [
+        {"question": "how do I update my registered mobile number", "answer": "Navigate to Profile > Contact Info to edit your number.", "keywords": "mobile number phone update", "category": "account"},
+        {"question": "how can I change my profile picture", "answer": "Click on your avatar in the top right and select Upload Photo.", "keywords": "profile picture photo avatar", "category": "account"}
+    ],
+    "general": [
+        {"question": "where is the main campus located", "answer": "The main campus is located in the downtown tech park.", "keywords": "location campus address map", "category": "general"},
+        {"question": "is parking available on site", "answer": "Yes, free parking is available in the basement for all students.", "keywords": "parking car vehicle space", "category": "general"}
+    ]
+}
+
+custom_entry_1 = invented_entries_bank[cat1].pop(0)
+custom_entry_2 = invented_entries_bank[cat2].pop(0) # (Using pop() ensures that if both digits yield the same category, we don't get duplicate questions)
+
+all_entries = fixed_entries + [custom_entry_1, custom_entry_2]
+df = pd.DataFrame(all_entries)
+
+print(f"Roll Number: {roll_number}")
+print(f"Last two digits: {d1}, {d2}")
+print(f"Computed Categories: '{cat1}', '{cat2}'")
+print("Final 6-row DataFrame:")
+print(df.to_string())
+
+#QUESTION_2
+def score_hypothesis(query, knowledge_base_df):
+    query_tokens = set(query.lower().split())
+    results = []
+    
+    for index, row in knowledge_base_df.iterrows():
+        searchable_text = str(row['question']).lower() + " " + str(row['keywords']).lower()
+        text_tokens = set(searchable_text.split())
+        match_count = len(query_tokens.intersection(text_tokens))
+        if len(query_tokens) > 0:
+            confidence = match_count / len(query_tokens)
+        else:
+            confidence = 0.0
+        if confidence > 0:
+            results.append({
+                'matched_question': row['question'],
+                'answer': row['answer'],
+                'category': row['category'],
+                'confidence_score': round(confidence, 2) # Round to 2 decimal places
+            })
+    results_df = pd.DataFrame(results)
+    
+    if not results_df.empty:
+        results_df = results_df.sort_values(by='confidence_score', ascending=False).reset_index(drop=True)
+    else:
+        print(f"No matches found for query: '{query}'")
+        
+    return results_df
+
+#QUESTION_3
+def same_category(category_name, df):
+    filtered_df = df[df['category'] == category_name]
+    return filtered_df['question'].tolist()
+
+mock_data = [
+    {"question": "what is the annual fee", "answer": "The annual fee is Rs 500.", "keywords": "fee cost price charge", "category": "billing"},
+    {"question": "how to reset password", "answer": "Go to Settings > Reset Password.", "keywords": "password reset login", "category": "account"},
+    {"question": "what are your working hours", "answer": "We are open 9 AM to 5 PM.", "keywords": "hours timing open time", "category": "general"},
+    {"question": "how can i pay the fee", "answer": "You can pay via UPI, card, or net banking.", "keywords": "pay payment upi fee", "category": "billing"},
+    # Personalized entries (assuming roll number ended in '4' and '5' -> categories 'account' and 'general')
+    {"question": "how do I update my registered mobile number", "answer": "Navigate to Profile > Contact Info.", "keywords": "mobile number phone update", "category": "account"},
+    {"question": "where is the main campus located", "answer": "The main campus is downtown.", "keywords": "location campus address map", "category": "general"}
+]
+df_3 = pd.DataFrame(mock_data)
+
+target_category = "account"
+matching_questions = same_category(target_category, df_3)
+
+for i, question in enumerate(matching_questions, 1):
+    print(f"{i}. {question}")
+
+
+#QUESTION_4
+target_index = 0
+print(f"Selected Question: '{df.loc[target_index, 'question']}'")
+print(f"Current Keywords: '{df.loc[target_index, 'keywords']}'")
+
+new_keyword = input("Please enter a new keyword to add to this entry: ")
+
+df.loc[target_index, 'keywords'] += f" {new_keyword}"
+print(f"\nUpdated Keywords: '{df.loc[target_index, 'keywords']}'")
+
+roll_number = "1024170278"
+csv_filename = f"{roll_number}_faq_data.csv"
+
+df.to_csv(csv_filename, index=False)
+
+
+#QUESTION_5
+category_counts = df.groupby('category').size().reset_index(name='entry_count')
+print(category_counts.to_string(index=False))
+
+#QUESTION_6
+def score_hypothesis_modified(query, knowledge_base_df):
+    query_tokens = set(query.lower().split())
+    results = []
+    
+    for index, row in knowledge_base_df.iterrows():
+        searchable_text = str(row['question']).lower() + " " + str(row['keywords']).lower()
+        text_tokens = set(searchable_text.split())
+        
+        match_count = len(query_tokens.intersection(text_tokens))
+        
+        confidence = match_count / len(query_tokens) if len(query_tokens) > 0 else 0.0
+            
+        if confidence > 0:
+            results.append({
+                'matched_question': row['question'],
+                'answer': row['answer'],
+                'category': row['category'],
+                'confidence_score': round(confidence, 2)
+            })
+            
+    results_df = pd.DataFrame(results)
+    
+    if results_df.empty:
+        print(f"\n--- Search Results for: '{query}' ---")
+        print("No matches found.")
+        return results_df
+        
+    max_score = results_df['confidence_score'].max()
+    
+    top_matches = results_df[results_df['confidence_score'] == max_score]
+    
+    print(f"\n--- Search Results for: '{query}' ---")
+    if len(top_matches) > 1:
+        print(f"TIE DETECTED: Found {len(top_matches)} equally good matches with a top score of {max_score}:")
+    else:
+        print(f"Clear winner found with a top score of {max_score}:")
+        
+    print(top_matches.to_string(index=False))
+    return top_matches
+
+
+# Example 1: A query designed to create a tie
+# The words "tell", "me", "about" aren't in the dataset.
+# The words "the" and "fee" are in BOTH billing entries.
+# Both entries will match 2 out of 5 words (Score: 0.40)
+tie_query = "tell me about the fee"
+score_hypothesis_modified(tie_query, df)
+
+# Example 2: A query with a clear single winner
+# The words "how", "to", "reset", "password" will heavily favor the account entry.
+clear_query = "how to reset my password"
+score_hypothesis_modified(clear_query, df)
