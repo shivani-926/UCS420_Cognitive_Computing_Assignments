@@ -1,0 +1,97 @@
+#QUESTION 1
+import numpy as np
+my_array = np.array([10, 20, 30, 40, 50])
+print("Original Array:", my_array)
+added_array = my_array + 2
+print("\na) After adding 2:     ", added_array)
+multiplied_array = my_array * 3
+print("b) After multiplying by 3: ", multiplied_array)
+divided_array = my_array / 2
+print("c) After dividing by 2:    ", divided_array)
+
+#QUESTION 2
+arr = np.array([1, 2, 3, 6, 4, 5])
+reversed_arr = arr[::-1] 
+print("Original arr:", arr)
+print("Reversed arr:", reversed_arr)
+
+def find_most_frequent(array, array_name):
+    values, counts = np.unique(array, return_counts=True)
+    max_count = counts.max()
+    most_frequent_values = values[counts == max_count]
+    print(f"Array {array_name}: {array}")
+    for val in most_frequent_values:
+        # np.where finds the exact index positions of the target value
+        indices = np.where(array == val)[0]
+        print(f" -> Most frequent value: {val} | Indice(s): {indices}")
+
+# i. Array x
+x = np.array([1, 2, 3, 4, 5, 1, 2, 1, 1, 1])
+find_most_frequent(x, "x")
+
+# ii. Array y
+y = np.array([1, 1, 1, 2, 3, 4, 2, 4, 3, 3])
+find_most_frequent(y, "y")
+
+#QUESTION 3
+arr = np.array([
+    [10, 20, 30], 
+    [40, 50, 60], 
+    [70, 80, 90]
+])
+print("The 2D Array is:\n", arr)
+
+# a) Access 1st row, 2nd column 
+element_a = arr[0, 1]
+print("\na) 1st row, 2nd column ( arr[0, 1] ):", element_a)
+
+# b) Access 3rd row, 1st column
+element_b = arr[2, 0]
+print("b) 3rd row, 1st column ( arr[2, 0] ):", element_b)
+
+#QUESTION 4
+# 1. Create a 1D array with 25 evenly spaced numbers from 10 to 100
+arr = np.linspace(10, 100, 25)
+print("Array 'arr':\n", arr)
+
+# 2. Print the requested properties
+print("\n--- Array Properties ---")
+print("Dimensions (ndim):    ", arr.ndim)
+print("Shape:                ", arr.shape)
+print("Total elements (size):", arr.size)
+print("Data type (dtype):    ", arr.dtype)
+print("Total bytes (nbytes): ", arr.nbytes, "bytes")
+
+# 3. Find the transpose using reshape()
+transposed_reshape = gemini.reshape(25, 1) 
+
+print("\n--- Transpose using reshape(25, 1) ---")
+print("New Shape:", transposed_reshape.shape)
+print(transposed_reshape)
+
+#QUESTION 5
+
+# 1. Create a 2D Array of 3 rows and 4 columns
+data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 15, 20, 35]
+arr1 = np.array(data).reshape(3, 4)
+
+print("Original Array (3x4):")
+print(arr1)
+
+# 2. Compute the requested statistics
+print("\n--- Array Computations ---")
+print("Mean:           ", np.mean(arr1))
+print("Median:         ", np.median(arr1))
+print("Max:            ", np.max(arr1))
+print("Min:            ", np.min(arr1))
+print("Unique Elements:", np.unique(arr1))
+
+# 3. Reshape the array to 4 rows and 3 columns
+reshaped_arr1 = arr1.reshape(4, 3)
+print("\n--- Reshaped Array (4x3) ---")
+print(reshaped_arr1)
+
+# 4. Resize the array to 2 rows and 3 columns
+resized_arr1 = np.resize(arr1, (2, 3))
+print("\n--- Resized Array (2x3) ---")
+print(resized_arr1)
